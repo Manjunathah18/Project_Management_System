@@ -184,7 +184,7 @@ The exact request payloads and permission requirements are defined in the backen
 ## Author
 
 **Your Name**  
-GitHub:Manjunatha(https://github.com/Manjunathah18)
+GitHub:Manjunatha H(https://github.com/Manjunathah18)
 
 
 
