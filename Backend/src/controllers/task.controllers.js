@@ -158,17 +158,22 @@ const updateTask = asyncHandler(async (req, res) => {
     attachments = [...attachments, ...newAttachments];
   }
 
+  const updateFields = {
+    ...(title && { title }),
+    ...(description !== undefined && { description }),
+    ...(status && { status }),
+    attachments,
+  };
+
+  if (assignedTo !== undefined) {
+    updateFields.assignedTo = assignedTo
+      ? new mongoose.Types.ObjectId(assignedTo)
+      : null;
+  }
+
   const updatedTask = await Task.findByIdAndUpdate(
     taskId,
-    {
-      ...(title && { title }),
-      ...(description !== undefined && { description }),
-      ...(status && { status }),
-      ...(assignedTo && {
-        assignedTo: new mongoose.Types.ObjectId(assignedTo),
-      }),
-      attachments,
-    },
+    updateFields,
     { new: true },
   ).populate("assignedTo", "avatar username fullName");
 

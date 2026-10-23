@@ -7,10 +7,20 @@ const ResetPasswordPage = () => {
   const { resetToken } = useParams();
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
     setLoading(true);
     try {
       await api.post(`/auth/reset-password/${resetToken}`, { newPassword });
@@ -32,6 +42,7 @@ const ResetPasswordPage = () => {
     <div>
       <div className="mb-6">
         <h3 className="text-lg font-medium text-gray-900">Set new password</h3>
+        <p className="text-sm text-gray-500">Please choose a new, strong password.</p>
       </div>
 
       <form className="space-y-6" onSubmit={handleSubmit}>
@@ -41,9 +52,26 @@ const ResetPasswordPage = () => {
             <input
               type="password"
               required
+              minLength={6}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Enter at least 6 characters"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <div className="mt-1">
+            <input
+              type="password"
+              required
+              minLength={6}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Re-enter your new password"
             />
           </div>
         </div>

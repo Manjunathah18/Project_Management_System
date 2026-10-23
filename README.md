@@ -86,11 +86,11 @@ Replace the placeholder URL with your actual GitHub repository URL.
 ### 2. Configure and start the backend
 
 ```bash
-cd Backend_ProjectManagement
+cd Backend
 npm install
 ```
 
-Create a local `.env` file in `Backend_ProjectManagement/` by copying `.env.example`, then fill in your own configuration values.
+Create a local `.env` file in `Backend/` by copying `.env.example`, then fill in your own configuration values.
 
 On Windows PowerShell:
 

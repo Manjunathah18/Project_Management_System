@@ -78,7 +78,10 @@ const createTaskValidator = () => {
   return [
     body("title").trim().notEmpty().withMessage("Task title is required"),
     body("description").optional().trim(),
-    body("assignedTo").optional().isMongoId().withMessage("Invalid user ID"),
+    body("assignedTo")
+      .optional({ values: "falsy" })
+      .isMongoId()
+      .withMessage("Invalid user ID"),
     body("status")
       .optional()
       .isIn(AvailableTaskStatues)
@@ -94,7 +97,10 @@ const updateTaskValidator = () => {
       .notEmpty()
       .withMessage("Title cannot be empty"),
     body("description").optional().trim(),
-    body("assignedTo").optional().isMongoId().withMessage("Invalid user ID"),
+    body("assignedTo")
+      .optional({ values: "falsy" })
+      .isMongoId()
+      .withMessage("Invalid user ID"),
     body("status")
       .optional()
       .isIn(AvailableTaskStatues)

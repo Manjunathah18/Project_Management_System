@@ -15,8 +15,8 @@ const MemberRow = ({ member, currentUserRole, onUpdateRole, onRemove }) => {
           <User size={20} />
         </div>
         <div>
-          <p className="text-sm font-medium text-gray-900">{member.user.fullName}</p>
-          <p className="text-xs text-gray-500">{member.user.email}</p>
+          <p className="text-sm font-medium text-gray-900">{member.user?.fullName || member.user?.username || 'Unknown User'}</p>
+          <p className="text-xs text-gray-500">{member.user?.email}</p>
         </div>
       </div>
       
@@ -29,7 +29,7 @@ const MemberRow = ({ member, currentUserRole, onUpdateRole, onRemove }) => {
           <div className="flex items-center space-x-2 border-l pl-4">
             <select
               value={member.role}
-              onChange={(e) => onUpdateRole(member.user._id, e.target.value)}
+              onChange={(e) => onUpdateRole(member.user?._id, e.target.value)}
               className="text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="member">Member</option>
@@ -37,7 +37,7 @@ const MemberRow = ({ member, currentUserRole, onUpdateRole, onRemove }) => {
               <option value="admin">Admin</option>
             </select>
             <button
-              onClick={() => onRemove(member.user._id)}
+              onClick={() => onRemove(member.user?._id)}
               className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"
             >
               <Trash2 size={18} />

@@ -33,15 +33,17 @@ const sendEmail = async (options) => {
 
   try {
     await transporter.sendMail(mail);
+    return { delivered: true };
   } catch (error) {
+    const link = options?.mailgenContent?.body?.action?.button?.link || 'Link not found in mailgenContent';
     console.log('\n======================================================');
     console.log('📧 EMAIL INTERCEPTED (Mailtrap not configured) 📧');
     console.log(`To: ${options.email}`);
     console.log(`Subject: ${options.subject}`);
     console.log(`\n🔗 CLICK THIS LINK:`);
-    const link = options?.mailgenContent?.body?.action?.button?.link || 'Link not found in mailgenContent';
     console.log(link);
     console.log('======================================================\n');
+    return { delivered: false, link };
   }
 };
 

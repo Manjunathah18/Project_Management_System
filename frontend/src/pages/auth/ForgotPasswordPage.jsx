@@ -7,14 +7,18 @@ const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [resetUrl, setResetUrl] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post('/auth/forgot-password', { email });
+      const res = await api.post('/auth/forgot-password', { email });
       setSubmitted(true);
-      toast.success('Password reset email sent');
+      if (res.data?.data?.resetUrl) {
+        setResetUrl(res.data.data.resetUrl);
+      }
+      toast.success(res.data?.message || 'Password reset email sent');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to send reset email');
     } finally {
@@ -23,15 +27,46 @@ const ForgotPasswordPage = () => {
   };
 
   if (submitted) {
+    // If resetUrl is an absolute URL pointing to current origin or a relative path, get the path for React Router Link
+    let relativeResetPath = null;
+    if (resetUrl) {
+      try {
+        const urlObj = new URL(resetUrl);
+        relativeResetPath = urlObj.pathname + urlObj.search;
+      } catch (err) {
+        relativeResetPath = resetUrl;
+      }
+    }
+
     return (
       <div className="text-center">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Check your email</h3>
-        <p className="text-sm text-gray-500 mb-6">
-          We've sent a password reset link to {email}.
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Password Reset Request</h3>
+        <p className="text-sm text-gray-500 mb-4">
+          A password reset request was initiated for <span className="font-semibold text-gray-700">{email}</span>.
         </p>
-        <Link to="/login" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-          Return to sign in
-        </Link>
+
+        {relativeResetPath && (
+          <div className="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-md text-left">
+            <p className="text-xs font-semibold text-indigo-800 uppercase tracking-wide mb-1">
+              Development Link:
+            </p>
+            <p className="text-xs text-indigo-600 mb-3">
+              SMTP is in development mode. Click below to reset your password immediately:
+            </p>
+            <Link
+              to={relativeResetPath}
+              className="inline-block text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md shadow-sm transition"
+            >
+              Reset Password Now &rarr;
+            </Link>
+          </div>
+        )}
+
+        <div className="mt-4">
+          <Link to="/login" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+            Return to sign in
+          </Link>
+        </div>
       </div>
     );
   }

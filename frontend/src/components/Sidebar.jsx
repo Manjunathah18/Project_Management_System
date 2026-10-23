@@ -65,7 +65,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               Projects
             </h3>
             <div className="mt-2 space-y-1">
-              {projects.map((p) => (
+              {projects?.map((p) => p?.project && (
                 <NavLink
                   key={p.project._id}
                   to={`/projects/${p.project._id}`}

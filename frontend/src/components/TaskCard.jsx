@@ -30,18 +30,21 @@ const TaskCard = ({ task, projectId }) => {
                 <span>{completedSubtasks}/{totalSubtasks}</span>
               </div>
             )}
-            {task.files?.length > 0 && (
+            {(task.attachments?.length > 0 || task.files?.length > 0) && (
               <div className="flex items-center text-xs">
                 <Paperclip size={14} className="mr-1" />
-                <span>{task.files.length}</span>
+                <span>{task.attachments?.length || task.files?.length}</span>
               </div>
             )}
           </div>
           
           {task.assignedTo && (
             <div className="flex items-center">
-              <div className="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-xs font-medium" title={task.assignedTo.username}>
-                {task.assignedTo.fullName?.charAt(0).toUpperCase()}
+              <div
+                className="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-xs font-medium"
+                title={task.assignedTo.fullName || task.assignedTo.username}
+              >
+                {(task.assignedTo.fullName || task.assignedTo.username)?.charAt(0).toUpperCase()}
               </div>
             </div>
           )}

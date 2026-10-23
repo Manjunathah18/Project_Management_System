@@ -66,7 +66,7 @@ const TaskDetailPage = () => {
     if (!isAdmin) return;
     setUpdatingTask(true);
     try {
-      await api.put(`/tasks/${projectId}/t/${taskId}`, { assignedTo: userId || undefined });
+      await api.put(`/tasks/${projectId}/t/${taskId}`, { assignedTo: userId || null });
       fetchTaskDetails();
       toast.success('Assignment updated');
     } catch (error) {

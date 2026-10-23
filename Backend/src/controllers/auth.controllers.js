@@ -28,7 +28,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { email, username, password, role } = req.body;
+  const { email, username, password, role, fullName } = req.body;
 
   const existedUser = await User.findOne({
     $or: [{ username }, { email }],
@@ -42,6 +42,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     username,
+    fullName,
     isEmailVerified: false,
   });
 
@@ -84,11 +85,16 @@ const registerUser = asyncHandler(async (req, res) => {
 const login = asyncHandler(async (req, res) => {
   const { email, password, username } = req.body;
 
-  if (!email) {
-    throw new ApiError(400, " email is required");
+  if (!email && !username) {
+    throw new ApiError(400, "Email or username is required");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({
+    $or: [
+      ...(email ? [{ email }] : []),
+      ...(username ? [{ username }] : []),
+    ],
+  });
 
   if (!user) {
     throw new ApiError(400, "User does not exists");
@@ -263,9 +269,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken: newRefreshToken } =
       await generateAccessAndRefreshTokens(user._id);
 
-    user.refreshToken = newRefreshToken;
-    await user.save();
-
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
@@ -299,22 +302,33 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
 
   await user.save({ validateBeforeSave: false });
 
-  await sendEmail({
+  const resetUrl = `${process.env.FORGOT_PASSWORD_REDIRECT_URL}/${unHashedToken}`;
+
+  const emailResult = await sendEmail({
     email: user?.email,
     subject: "Password reset request",
     mailgenContent: forgotPasswordMailgenContent(
       user.username,
-      `${process.env.FORGOT_PASSWORD_REDIRECT_URL}/${unHashedToken}`,
+      resetUrl,
     ),
   });
+
+  // In development, if email was not delivered, include the reset URL in response
+  // so the user can still reset their password
+  const responseData =
+    process.env.NODE_ENV === "development" && !emailResult.delivered
+      ? { resetUrl }
+      : {};
 
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        {},
-        "Password reset mail has been sent on your mail id",
+        responseData,
+        emailResult.delivered
+          ? "Password reset mail has been sent on your mail id"
+          : "Password reset link generated (email not configured, see response)",
       ),
     );
 });

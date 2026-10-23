@@ -58,7 +58,7 @@ const NoteCard = ({ note, projectId, isAdmin, onUpdate }) => {
         <>
           <p className="text-gray-800 text-sm whitespace-pre-wrap">{note.content}</p>
           <div className="mt-4 text-xs text-gray-400 flex justify-between items-center">
-            <span>By {note.createdBy?.fullName || 'Unknown'}</span>
+            <span>By {note.createdBy?.fullName || note.createdBy?.username || 'Unknown'}</span>
             <span>{new Date(note.createdAt).toLocaleDateString()}</span>
           </div>
           

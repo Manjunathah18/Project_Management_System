@@ -22,7 +22,7 @@ const Header = ({ setSidebarOpen }) => {
           <div className="flex items-center gap-x-4">
             <div className="flex flex-col items-end">
               <span className="text-sm font-medium leading-6 text-gray-900">
-                {user?.fullName}
+                {user?.fullName || user?.username}
               </span>
               <span className="text-xs leading-5 text-gray-500">
                 @{user?.username}
